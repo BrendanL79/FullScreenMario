@@ -16,7 +16,8 @@ function FullScreenMario() {
   
   // Know when to shut up
   window.verbosity = {Maps: false,
-                      Sounds: false};
+                      Sounds: false,
+                      };
   
   // Oh, HTML5.
   window.requestAnimationFrame = window.requestAnimationFrame
@@ -141,6 +142,11 @@ function resetGameState(nocount) {
   resetQuadrants();
   // Keep a history of pressed keys
   window.gamehistory = [];
+  // Keep a history of pressed keys
+  window.gamehistory = [];
+  // Clear audio
+  pauseAllSounds();
+  sounds = {};
 }
 
 function scrollWindow(x, y) {

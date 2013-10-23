@@ -83,7 +83,7 @@ function setSolid(me, name) {
   me.solid = me.alive = true;
   me.speed = me.speed || 0; // vertical speed
   me.collide = me.collide || characterTouchedSolid;
-  me.bottomBump = me.bottomBump ||  function() { /*play("Bump.wav");*/ };
+  me.bottomBump = me.bottomBump ||  function() { /*play("Bump");*/ };
   me.action = me.action || function() {};
   me.jump = me.jump || function() {};
   me.spritewidth = me.spritewidth || 8;
@@ -234,8 +234,12 @@ function FireBall(me, moveleft) {
 }
 function fireEnemy(enemy, me) {
   if(!me.alive || me.emerging || enemy.nofire || enemy.height <= unitsize) return;
-  playLocal("Kick.wav", me.right);
-  if(!enemy.solid) {
+
+  if(enemy.solid) {
+    playLocal("Bump", me.right);
+  }
+  else {
+    playLocal("Kick", me.right);
     enemy.death(enemy, 2);
     scoreEnemyFire(enemy);
   }
@@ -263,6 +267,7 @@ function Star(me) { // GOLDEEN GOLDEEN
   me.collide = collideFriendly;
   me.action = marioStar;
   me.death = killNormal;
+  me.nofire = true;
   setCharacter(me, "star item"); // Item class so mario's star isn't confused with this
   addSpriteCycle(me, ["one", "two", "three", "four"], 0, 7);
 }
@@ -272,7 +277,7 @@ function Shell(me, smart) {
   me.group = "item";
   me.speed = unitsizet2;
   me.collide_primary = true;
-  me.moveleft = me.xvel = me.move = me.hitcount = me.peeking = me.counting = me.landing = me.hitcount = 0;
+  me.moveleft = me.xvel = me.move = me.hitcount = me.peeking = me.counting = me.landing = me.enemyhitcount = 0;
   me.smart = smart;
   me.movement = moveShell;
   me.collide = hitShell;
@@ -289,12 +294,12 @@ function hitShell(one, two) {
     // Hitting a wall
     case "solid": 
       if(two.right < one.right) {
-        playLocal("Bump.wav", one.left);
+        playLocal("Bump", one.left);
         setRight(two, one.left);
         two.xvel = -two.speed;
         two.moveleft = true;
       } else {
-        playLocal("Bump.wav", one.right);
+        playLocal("Bump", one.right);
         setLeft(two, one.right);
         two.xvel = two.speed;
         two.moveleft = false;
@@ -362,7 +367,7 @@ function hitShell(one, two) {
         
         // Mario is landing on the shell (movements, xvels already set)
         if(mariojump) {
-          play("Kick.wav");
+          play("Kick");
           // The shell is moving
           if(!two.xvel) {
             jumpEnemy(one, two);
@@ -425,9 +430,9 @@ function hitShell(one, two) {
             } // Otherwise just kill it normally
             else killFlip(one);
             
-            play("Kick.wav");
-            score(one, findScore(two.hitcount), true);
-            ++two.hitcount;
+            play("Kick");
+            score(one, findScore(two.enemyhitcount), true);
+            ++two.enemyhitcount;
           } // Otherwise the enemy just turns around
           else one.moveleft = objectToLeft(one, two);
         break;
@@ -446,7 +451,7 @@ function hitShell(one, two) {
 function moveShell(me) {
   if(me.xvel != 0) return;
   
-  if(++me.counting == 350) {
+  if(++me.counting == 350) { 
     addClass(me, "peeking");
     me.peeking = true;
     me.height += unitsized8;
@@ -472,7 +477,7 @@ function jumpEnemy(me, enemy) {
   if(me.keys.up) me.yvel = unitsize * -1.4;
   else me.yvel = unitsize * -.7;
   me.xvel *= .91;
-  play("Kick.wav");
+  play("Kick");
   if(enemy.group != "item" || enemy.type == "shell")
     score(enemy, findScore(me.jumpcount++ + me.jumpers), true);
   ++me.jumpers;
@@ -826,7 +831,7 @@ function moveCannonInit(me) {
         flipHoriz(spawn);
       }
       else addThing(spawn, me.left + me.width, me.top);
-      playLocal("Bump.wav", me.right);
+      playLocal("Bump", me.right);
     }, 270, -1, me);
   me.movement = false;
 }
@@ -890,14 +895,14 @@ function bowserFires(me) {
   if(!me.lookleft) return;
   // Close the mouth
   addClass(me, "firing");
-  playLocal("Bowser Fires.wav", me.left);
+  playLocal("Bowser Fires", me.left);
   // After a little bit, open and fire
   addEvent(function(me) {
     var top = me.top + unitsizet4,
         fire = new Thing(BowserFire, roundDigit(mario.bottom, unitsizet8));
     removeClass(me, "firing");
     addThing(fire, me.left - unitsizet8, top);
-    play("Bowser Fires.wav");
+    play("Bowser Fires");
   }, 14, me);
 }
 // This is for when Fiery Mario kills bowser - the normal one is listed under the castle things
@@ -1214,7 +1219,7 @@ function BeetleShell(me) {
   me.nofire = true;
   me.group = "item";
   me.speed = unitsizet2;
-  me.moveleft = me.xvel = me.move = me.hitcount = me.peeking = me.counting = me.landing = 0;
+  me.moveleft = me.xvel = me.move = me.hitcount = me.peeking = me.counting = me.landing = me.enemyhitcount = 0;
   me.movement = moveShell;
   me.collide = hitShell;
   me.death = killFlip;
@@ -1243,7 +1248,7 @@ function coinBecomesSolid(me) {
 }
 function hitCoin(me, coin) {
   if(!me.mario) return;
-  play("Coin.wav");
+  play("Coin");
   score(me, 200, false);
   gainCoin();
   killNormal(coin);
@@ -1256,7 +1261,7 @@ function gainCoin() {
   updateDataElement(data.coins);
 }
 function coinEmerge(me, solid) {
-  play("Coin.wav");
+  play("Coin");
   removeClass(me, "still");
   switchContainers(me, characters, scenery);
   score(me, 200, false);
@@ -1380,7 +1385,7 @@ function removeCrouch() {
 
 function marioShroom(me) {
   if(me.shrooming) return;
-  play("Powerup.wav");
+  play("Powerup");
   score(me, 1000, true);
   if(me.power == 3) return;
   me.shrooming = true;
@@ -1432,7 +1437,7 @@ function marioGetsSmall(me) {
   addEvent(function(mario) {
     removeClass(mario, "large");
     setMarioSizeSmall(mario);
-    setBottom(mario, bottom);
+    setBottom(mario, bottom - unitsized2);
   }, 21, mario);
   // Step three (t+42)
   addEvent(function(mario) {
@@ -1527,14 +1532,21 @@ function moveMario(me) {
       me.skidding = false;
     }
   }
-  // Otherwise slow down a bit, with a little more if crouching
+  // Otherwise slow down a bit/*, with a little more if crouching*/
   else {
-    me.xvel *= (.98 - Boolean(me.crouching) * .07);
+    me.xvel *= (.98/* - Boolean(me.crouching) * .07*/);
     decel = .035;
   }
 
-  if(me.xvel > 0) me.xvel = max(0, me.xvel - decel);
-  else me.xvel = min(0, me.xvel + decel);
+  if(me.xvel > decel) me.xvel-=decel;
+  else if(me.xvel < -decel) me.xvel+=decel;
+  else if(me.xvel!=0) {
+	me.xvel = 0;
+	if(!window.nokeys && me.keys.run==0) {
+      if(me.keys.left_down)me.keys.run=-1;
+      else if(me.keys.right_down)me.keys.run=1;
+    }  
+  }
   
   // Movement mods
   // Slowing down
@@ -1546,7 +1558,6 @@ function moveMario(me) {
       addClass(me, "still");
       clearClassCycle(me, "running");
     }
-    if(Math.abs(me.xvel) < .049) me.xvel = 0;
   }
   // Not moving slowly
   else if(!me.running) {
@@ -1694,14 +1705,14 @@ function marioFires() {
   addEvent(function(mario) { removeClass(mario, "firing"); }, 7, mario);
 }
 function emergeFire(me) {
-  play("Fireball.wav");
+  play("Fireball");
 }
 
 function marioStar(me) {
   if(me.star) return;
   ++me.star;
-  play("Powerup.wav");
-  playTheme("Starman", true);
+  play("Powerup");
+  playTheme("Star", true);
   addEvent(marioRemoveStar, 560, me);
   switchClass(me, "normal", "star");
   addSpriteCycle(me, ["star1", "star2", "star3", "star4"], "star", 5);
@@ -1727,7 +1738,7 @@ function killMario(me, big) {
   else {
     // If Mario can survive this, just power down
     if(!big && me.power > 1) {
-      play("Power Down.wav");
+      play("Power Down");
       me.power = 1;
       storeMarioStats();
       return marioGetsSmall(me);
@@ -1757,7 +1768,7 @@ function killMario(me, big) {
 
   // Clear and reset
   pauseAllSounds();
-  if(!window.editing) play("Mario Dies.wav");
+  if(!window.editing) play("Mario Dies");
   me.nocollide = me.nomove = nokeys = 1;
   --data.lives.amount;
   if(!map.random) data.score.amount = data.scoreold;
@@ -1810,7 +1821,7 @@ function gameOver() {
   gameon = false;
   pause();
   pauseTheme();
-  play("Game Over.mp3");
+  play("Game Over");
   
   var innerHTML = "<div style='font-size:49px;padding-top: " + (innerHeight / 2 - 28/*49*/) + "px'>GAME OVER</div>";
   // innerHTML += "<p style='font-size:14px;opacity:.49;width:490px;margin:auto;margin-top:49px;'>";
@@ -1878,7 +1889,7 @@ function Brick(me, content) {
 }
 function brickBump(me, character) {
   if(me.up || character.type != "mario") return;
-  play("Bump.wav");
+  play("Bump");
   if(me.used) return;
   me.up = character;
   if(character.power > 1 && !me.contents)
@@ -1915,7 +1926,7 @@ function makeUsedBlock(me) {
   switchClass(me, "unused", "used");
 }
 function brickBreak(me, character) {
-  play("Break Block.wav");
+  play("Break Block");
   score(me, 50);
   me.up = character;
   addEvent(placeShards, 1, me);
@@ -1974,7 +1985,7 @@ function Block(me, content, hidden) {
 function blockBump(me, character) {
   if(character.type != "mario") return;
   if(me.used) {
-    play("Bump.wav");
+    play("Bump");
     return;
   }
   me.used = 1;
@@ -2033,7 +2044,7 @@ function Vine(me, locnum) {
 }
 
 function vineEmerge(me, solid) {
-  play("Vine Emerging.wav");
+  play("Vine Emerging");
   setHeight(me, 0);
   me.movement = vineMovement;
   addEvent(vineEnable, 14, me);
@@ -2462,7 +2473,7 @@ function FlagCollision(me, detector) {
   if(!me || !me.mario) return killNormal(me);
   window.detector = detector;
   pauseAllSounds();
-  play("Flagpole.wav");
+  play("Flagpole");
   
   // Reset and clear most stuff, including killing all other characters
   killOtherCharacters();
@@ -2539,7 +2550,7 @@ function FlagOff(me, pole) {
   clearClassCycle(me, "climbing");
   setLeft(me, pole.right, true);
   setTimeout(function() {
-    play("Stage Clear.wav");
+    play("Stage Clear");
     marioHopsOff(me, pole, true);
   }, timer * 14);
 }
@@ -2556,7 +2567,7 @@ function endLevelPoints(me, detector) {
   // Determine the number of fireballs (1, 3, and 6 become not 0)
   var numfire = getLast(String(data.time.amount));
   if(!(numfire == 1 || numfire == 3 || numfire == 6)) numfire = 0;
-  
+
   // Count down the points (x50)
   var points = setInterval(function() {
     // 50 for each
@@ -2565,7 +2576,7 @@ function endLevelPoints(me, detector) {
     updateDataElement(data.score);
     updateDataElement(data.time);
     // Each point(x50) plays the coin noise
-    play("Coin.wav");
+    play("Coin");
     // Once it's done, move on to the fireworks.
     if(data.time.amount <= 0)  {
       // pause();
@@ -2581,7 +2592,7 @@ function endLevelFireworks(me, numfire, detector) {
     // var castlemid = detector.castle.left + detector.castle.width * unitsized2;
     var castlemid = detector.left + 32 * unitsized2;
     while(i < numfire)
-      explodeFirework(i++, castlemid);
+      explodeFirework(++i, castlemid); //pre-increment since explodeFirework expects numbers starting at 1
     nextnum = timer * (i + 2) * 42;
   }
   else nextnum = 0;
@@ -2590,14 +2601,13 @@ function endLevelFireworks(me, numfire, detector) {
   nextfunc = function() { setTimeout(function() { endLevel(); }, nextnum); };
   
   // If the Stage Clear sound is still playing, wait for it to finish
-  if(sounds["Stage Clear.wav"] && !sounds["Stage Clear.wav"].paused)
-    sounds["Stage Clear.wav"].addEventListener("ended", function() { addEvent(nextfunc, 35); });
+  if(sounds["Stage Clear"] && !sounds["Stage Clear"].paused)
+    sounds["Stage Clear"].addEventListener("ended", function() { addEvent(nextfunc, 35); });
   // Otherwise just start it immediately
   else nextfunc();
 }
 function explodeFirework(num, castlemid) {
   setTimeout(function() {
-    if(!map.ending) return;
     var fire = new Thing(Firework, num);
     addThing(fire, castlemid + fire.locs[0] - unitsize * 6, unitsizet16 + fire.locs[1]);
     fire.animate();
@@ -2620,7 +2630,7 @@ function Firework(me, num) {
   // Otherwise, it's just a normal explosion
   me.animate = function() {
     var name = me.className + " n";
-    if(me.locs) play("Firework.wav");
+    if(me.locs) play("Firework");
     addEvent(function(me) { setClass(me, name + 1); }, 0, me);
     addEvent(function(me) { setClass(me, name + 2); }, 7, me);
     addEvent(function(me) { setClass(me, name + 3); }, 14, me);

@@ -316,9 +316,9 @@ function resetLibrary() {
           }
         },
         Mushroom: {
-          normal: "p[0,1,6,8]x06,2222x011,222233x09,22223333x07,x25,x35,x05,x27,3332200022333x29,002x35,x28,022x35,x25,332222x35,x25,3332222333x27,33x217,02333x16,3332x05,x18,x08,x16,21x08,x16,21x09,111121x05,",
-          gainlife: "p[0,1,6,14]x06,2222x011,222233x09,22223333x07,x25,x35,x05,x27,3332200022333x29,002x35,x28,022x35,x25,332222x35,x25,3332222333x27,33x217,02333x16,3332x05,x18,x08,x16,21x08,x16,21x09,111121x05,",
-          deathly: "p[0,5,9,16]x06,2222x011,222233x09,22223333x07,x25,x35,x05,x27,3332200022333x29,002x35,x28,022x35,x25,332222x35,x25,3332222333x27,33x217,02333x16,3332x05,x18,x08,x16,21x08,x16,21x09,111121x05,"
+          normal: "p[0,1,6,8]x06,2222x011,332222x09,33332222x07,x35,x25,x05,22333x27,000x29,3332200x28,x35,202233x25,x35,222333x25,x35,22233x27,333x219,02333x16,3332x05,x18,x08,12x16,x08,12x16,x09,121111x05,",
+          gainlife: "p[0,1,6,14]x06,2222x011,332222x09,33332222x07,x35,x25,x05,22333x27,000x29,3332200x28,x35,202233x25,x35,222333x25,x35,22233x27,333x219,02333x16,3332x05,x18,x08,12x16,x08,12x16,x09,121111x05,",
+          deathly: "p[0,5,9,16]x06,2222x011,332222x09,33332222x07,x35,x25,x05,22333x27,000x29,3332200x28,x35,202233x25,x35,222333x25,x35,22233x27,333x219,02333x16,3332x05,x18,x08,12x16,x08,12x16,x09,121111x05,"
         },
         Pirhana: {
           normal: {
@@ -648,50 +648,46 @@ function resetLibrary() {
     posts: [],
     sounds: {
       names: [
-        "Bowser Falls.wav",
-        "Bowser Fires.wav",
-        "Break Block.wav",
-        "Bump.wav",
-        "Coin.wav",
-        "Ending.mp3",
-        "Fireball.wav",
-        "Firework.wav",
-        "Flagpole.wav",
-        "Gain Life.wav",
-        "Game Over 2.mp3",
-        "Game Over.mp3",
-        "Hurry.mp3",
-        "Into the Tunnel.mp3",
-        "Jump Small.wav",
-        "Jump Super.wav",
-        "Kick.wav",
-        "Level Complete.mp3",
-        "Mario Dies.wav",
-        "Pause.wav",
-        "Pipe.wav",
-        "Power Down.wav",
-        "Powerup Appears.wav",
-        "Powerup.wav",
-        "Stage Clear.wav",
-        "Vine Emerging.wav",
-        "World Clear.wav",
-        "You Dead.mp3"
+        "Bowser Falls",
+        "Bowser Fires",
+        "Break Block",
+        "Bump",
+        "Coin",
+        "Ending",
+        "Fireball",
+        "Firework",
+        "Flagpole",
+        "Gain Life",
+        "Game Over 2",
+        "Game Over",
+        "Hurry",
+        "Into the Tunnel",
+        "Jump Small",
+        "Jump Super",
+        "Kick",
+        "Level Complete",
+        "Mario Dies",
+        "Pause",
+        "Pipe",
+        "Power Down",
+        "Powerup Appears",
+        "Powerup",
+        "Stage Clear",
+        "Vine Emerging",
+        "World Clear",
+        "You Dead"
       ],
       themes: [
-        "Castle.mp3",
-        "Overworld.mp3",
-        "Sky.mp3",
-        "Underwater.mp3",
-        "Underworld.mp3",
-        
-        "Hurry Castle.mp3",
-        "Hurry Overworld.mp3",
-        // to do: missing Sky.mp3
-        "Hurry Underwater.mp3",
-        "Hurry Underworld.mp3",
-        
-        "Starman.mp3",
-        "Hurry Starman.mp3"
+        "Castle",
+        "Overworld",
+        "Underwater",
+        "Underworld",
+        "Star",
+        "Hurry Castle",
+        "Hurry Overworld",
+        "Hurry Underwater",
+        "Hurry Underworld",
+        "Hurry Star"
       ]
     }
   };
